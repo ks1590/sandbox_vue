@@ -1,5 +1,12 @@
 <template>
-  <div class="dropzone">
+  <div
+    @dragenter.prevent="toggleActive"
+    @dragleave.prevent="toggleActive"
+    @dragover.prevent
+    @drop.prevent="toggleActive"
+    :class="{ 'active-dropzone':active }"
+    class="dropzone"
+  >
     <span>Drag or Drop File</span>
     <span>OR</span>
     <label for="dropzoneFile">Select File</label>
@@ -8,8 +15,19 @@
 </template>
 
 <script>
+import { ref } from "vue"
+
 export default {
   name: 'DropZone',
+  setup() {
+    const active = ref(false);
+
+    const toggleActive = () => {
+      active.value = !active.value;
+    };
+
+    return {active, toggleActive}
+  }
 }
 </script>
 
@@ -25,16 +43,27 @@ export default {
     border: 2px dashed #41b883;
     background: #fff;
     transition: 0.3s ease all;
+    
+    label {
+      padding: 8px 12px;
+      color: #fff;
+      background: #41b883;
+      transition: 0.3s ease all;
+    }
+
+    input {
+      display: none;
+    }
   }
 
-  label {
-    padding: 8px 12px;
+  .active-dropzone {
     color: #fff;
+    border-color: #fff;
     background: #41b883;
-    transition: 0.3s ease all;
-  }
 
-  input {
-    display: none;
+    label {
+      background: #fff;
+      color: #41b883;
+    }
   }
 </style>
