@@ -2,6 +2,11 @@
   <div class="home">
     <Hero />
 
+    <div class="container search">
+      <input @keyup.enter="$fetch" type="text" placeholder="Search" v-model.lazy="searchInput" />
+      <button v-show="searchInput !== ''" class="button">Clear Search</button>
+    </div>
+
     <div class="container movies">
       <div id="movie-greid" class="movies-grid">
         <div class="movie" v-for="movie in movies" :key="movie.id">
@@ -28,10 +33,19 @@ export default {
   data() {
     return {
       movies: [],
+      searchedMovies: [],
+      searchInput: '',
     }
   },
   async fetch() {
-    await this.getMovies();
+    if (this.searchInput === '') {
+      await this.getMovies()
+      return
+    }
+
+    if (this.searchInput !== '') {
+      await this.serachMovies()
+    }
   },
   methods: {
     async getMovies() {
@@ -44,11 +58,39 @@ export default {
       });
       console.log(result.data.results);
     },
+    async serachMovies() {
+      const data = axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=37ed43a4f8eaa2abd75f9283692947bc&language=en-US&page=1&query=${this.searchInput}`
+      );
+      const result = await data
+      result.data.results.forEach((movie) => {
+        this.serachMovies.push(movie)
+      });
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.search {
+  display: flex;
+  padding: 32px 16px;
+  input {
+    max-width: 350px;
+    width: 100%;
+    padding: 12px 6px;
+    font-size: 14px;
+    border: none;
+    &:focus {
+      outline: none;
+    }
+  }
+  .button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
 .movies {
   padding: 32px 16px;
   .movies-grid {
