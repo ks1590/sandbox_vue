@@ -7,8 +7,10 @@
       <button @click="clearSearch" v-show="searchInput !== ''" class="button">Clear Search</button>
     </div>
 
+    <Loading v-if="$fetchState.pending" />
+
     <!-- Movies -->
-    <div class="container movies">
+    <div v-else class="container movies">
       <div v-if="searchInput !== ''" id="movie-greid" class="movies-grid">
         <div class="movie" v-for="movie in searchedMovies" :key="movie.id">
           <div class="movie-img">
